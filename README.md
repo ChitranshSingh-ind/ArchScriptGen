@@ -1,8 +1,9 @@
 <p align="center">
-  <img src="assets/logo.png" width="200"/>
+  <img src="logo.png" width="200"/>
 </p>
 
 <h1 align="center">🚀 ArchScriptGen</h1>
+
 ![Banner](./banner.png)
 # 🚀 ArchScriptGen
 
