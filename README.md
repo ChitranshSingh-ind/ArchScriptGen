@@ -1,60 +1,67 @@
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
-
 # 🚀 ArchScriptGen
+
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows-green)
+![Status](https://img.shields.io/badge/Status-Active-brightgreen)
+![Release](https://img.shields.io/github/v/release/ChitranshSingh-ind/ArchScriptGen)
+![Stars](https://img.shields.io/github/stars/ChitranshSingh-ind/ArchScriptGen)
+![Issues](https://img.shields.io/github/issues/ChitranshSingh-ind/ArchScriptGen)
+![Forks](https://img.shields.io/github/forks/ChitranshSingh-ind/ArchScriptGen)
+
+---
+
+## 💡 About
 
 **ArchScriptGen** is a GUI-based tool that helps you generate complete Arch Linux installation and configuration scripts using AI.
 
-Built with **PyQt6 + Groq API**, this app makes it easy to create customized Arch setups without manually writing complex bash scripts.
+Built with **PyQt6 + Groq API**, it simplifies the complex Arch setup process into an intuitive visual workflow.
 
 ---
 
 ## ✨ Features
 
-* 🖥️ Modern GUI (PyQt6)
+* 🖥️ Modern GUI built with PyQt6
 * 🤖 AI-powered script generation (Groq - LLaMA 3.3)
-* 🎨 Theme selection with preview
+* 🎨 Theme selection with live preview
 * 🧩 Desktop Environment chooser (GNOME, KDE, i3, XFCE, etc.)
-* 📦 Search and add apps from Arch repositories
+* 📦 Search and install apps from Arch repositories
 * 🖱️ Cursor theme selection
-* ⚙️ System configuration options:
+* ⚙️ Advanced system configuration:
 
-  * Bootloader
-  * Kernel
-  * Users & passwords
-  * Networking
+  * Bootloader selection
+  * Kernel selection
+  * User & hostname setup
+  * Network & drivers
 * 🌐 Wallpaper & dotfiles integration
-* 💾 Export generated scripts as `.sh` files
+* 💾 Export scripts as `.sh` files
 
 ---
 
-## 📦 Download
+## 🚀 Quick Start
 
-Go to the **Releases** section and download the latest version:
-
-👉 `ArchScriptGen.zip`
-
----
-
-## ▶️ How to Run
-
-1. Download and extract the zip file
-2. Open the folder
-3. Double-click:
+1. Download the latest version from **Releases**
+2. Extract the `.zip` file
+3. Open the folder
+4. Run:
 
 ```bash
 ArchScriptGen.exe
 ```
 
+5. Enter your Groq API key when prompted
+6. Start generating your Arch install script
+
 ---
 
 ## 🔑 API Key Setup
 
-On first launch, the app will ask for a **Groq API key**.
+This app uses the **Groq API** for AI script generation.
 
-Get a free key here:
+Get your free API key here:
 👉 https://console.groq.com/keys
 
-✔ Your key is stored locally
+✔ Stored locally on your machine
 ✔ Never uploaded or shared
 
 ---
@@ -68,18 +75,46 @@ Get a free key here:
 
 ## 🧠 How It Works
 
-1. Select your preferences (DE, apps, drivers, etc.)
+1. Select your system preferences (DE, apps, drivers, etc.)
 2. The app sends your request to Groq AI
-3. AI generates a full Arch Linux bash script
+3. AI generates a complete Arch Linux bash script
 4. You can review and export it
 
 ---
 
 ## ⚠️ Disclaimer
 
-* This tool **generates scripts only**, it does NOT install Arch Linux automatically
-* Always review scripts before running them
+* This tool **generates scripts only** — it does NOT install Arch Linux directly
+* Always review generated scripts before running them
 * Use at your own risk
+
+---
+
+## ✨ Features Overview
+
+| Feature              | Status |
+| -------------------- | ------ |
+| GUI Interface        | ✅      |
+| AI Script Generation | ✅      |
+| App Installer        | ✅      |
+| Theme Preview        | ✅      |
+| Cursor Selection     | ✅      |
+| Full Auto Installer  | 🚧     |
+| ISO Builder          | 🚧     |
+
+---
+
+## 📁 Project Structure
+
+```
+project/
+├── main.py
+├── themes/
+├── cursors/
+├── DesktopEnvironment/
+├── README.md
+└── LICENSE
+```
 
 ---
 
@@ -95,8 +130,8 @@ Get a free key here:
 
 ## 🐞 Known Issues
 
-* First launch may be slow (PyInstaller extraction)
-* Large file size due to PyQt6 bundling
+* First launch may be slow (PyInstaller extraction behavior)
+* Large executable size due to PyQt6 bundling
 
 ---
 
@@ -104,9 +139,9 @@ Get a free key here:
 
 * Full automated Arch installer scripts
 * Disk partitioning UI
-* ISO builder integration (archiso)
-* Plugin system
-* Performance improvements
+* Arch ISO builder integration (archiso)
+* Plugin system for custom configs
+* Performance optimizations
 
 ---
 
@@ -114,10 +149,8 @@ Get a free key here:
 
 Contributions are welcome!
 
-Feel free to:
-
-* Open issues
-* Submit pull requests
+* Open an issue
+* Submit a pull request
 * Suggest new features
 
 ---
@@ -132,6 +165,6 @@ If you like this project:
 
 ## 📜 License
 
-MIT License
+This project is licensed under the **MIT License**.
 
 ---
