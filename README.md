@@ -2,7 +2,7 @@
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Platform](https://img.shields.io/badge/Platform-Windows-green)
+![Platform](https://img.shields.io/badge/Platform-Linux-green)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Release](https://img.shields.io/github/v/release/ChitranshSingh-ind/ArchScriptGen)
 ![Stars](https://img.shields.io/github/stars/ChitranshSingh-ind/ArchScriptGen)
