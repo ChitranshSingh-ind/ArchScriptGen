@@ -10,13 +10,13 @@ from PyQt6.QtWidgets import (
     QComboBox, QScrollArea, QCheckBox, QGridLayout, QDialog, QMessageBox
 )
 from PyQt6.QtCore import Qt, QThread, QObject, pyqtSignal, QTimer
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QIcon
 from PyQt6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 from PyQt6.QtCore import QUrl
 
-# ── Portable base directory (works with PyInstaller .exe) ──
+
 if getattr(sys, 'frozen', False):
-    BASE_DIR = sys._MEIPASS   # ✅ PyInstaller temp folder
+    BASE_DIR = sys._MEIPASS   
 else:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -59,18 +59,23 @@ def get_network_manager():
         _network_manager = QNetworkAccessManager()
     return _network_manager
 
-# ── Groq client (initialised after we know the key) ──
+# ── Groq client ──
 client = None
 
 def init_groq_client(api_key: str):
     global client
     client = Groq(api_key=api_key)
 
-SYSTEM_PROMPT = (
-    "You are an Arch Linux expert. The user will describe what they want configured. "
-    "Return ONLY a bash script with no explanation, no markdown, no backticks. "
-    "Just raw bash script starting with #!/bin/bash."
-)
+# SHELL is set after the shell dialog — used to build SYSTEM_PROMPT dynamically
+SHELL = "bash"
+
+def get_system_prompt():
+    """Build system prompt using the current SHELL value."""
+    return (
+        "You are an Arch Linux expert. The user will describe what they want configured. "
+        "Return ONLY a bash script with no explanation, no markdown, no backticks. "
+        f"Just raw bash script starting with #!/bin/{SHELL}."
+    )
 
 # ── Shared style constants ──
 BTN_PRIMARY    = "background-color: #89b4fa; color: black; padding: 10px; font-size: 14px;"
@@ -192,16 +197,71 @@ class ApiKeyDialog(QDialog):
 
 
 # ─────────────────────────────────────────────
+# Shell Dialog
+# ─────────────────────────────────────────────
+class ShellDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Select Shell")
+        self.setMinimumWidth(480)
+        self.setStyleSheet("background-color: #1e1e2e; color: white;")
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(24, 24, 24, 24)
+        layout.setSpacing(14)
+
+        title = QLabel("What shell are you using?")
+        title.setStyleSheet("color: white; font-size:20px; font-weight: bold;")
+        layout.addWidget(title)
+
+        desc = QLabel(
+            "Arch Script Generator generates custom scripts for your shell. "
+            "Select the correct shell so the shebang line is set properly."
+        )
+        desc.setStyleSheet("color:#bac2de; font-size:13px")
+        desc.setWordWrap(True)
+        layout.addWidget(desc)
+
+        hlayout = QHBoxLayout()
+        hlayout.setSpacing(10)
+        label = QLabel("Shell:")
+        label.setStyleSheet("font-size: 16px; color: white;")
+        self.shellName = QComboBox()
+        self.shellName.addItems(["bash", "zsh", "fish"])
+        self.shellName.setStyleSheet(DROPDOWN_STYLE)
+        hlayout.addWidget(label)
+        hlayout.addWidget(self.shellName)
+        layout.addLayout(hlayout)
+
+        self.btn = QPushButton("Next →")
+        self.btn.setStyleSheet(BTN_SUCCESS)
+        self.btn.clicked.connect(self._shellClicked)
+        layout.addWidget(self.btn)
+        layout.addStretch()
+        self.setLayout(layout)
+
+    def _shellClicked(self):
+        global SHELL
+        SHELL = self.shellName.currentText()
+        self.accept()
+
+    def get_shell(self) -> str:
+        return SHELL
+
+
+# ─────────────────────────────────────────────
 # Background workers
 # ─────────────────────────────────────────────
 class GroqWorker(QObject):
     finished = pyqtSignal(str)
     error    = pyqtSignal(str)
 
-    def __init__(self, prompt, system=SYSTEM_PROMPT):
+    def __init__(self, prompt, system=None):
         super().__init__()
         self.prompt = prompt
-        self.system = system
+        # Always call get_system_prompt() at worker creation so SHELL is current
+        self.system = system if system is not None else get_system_prompt()
 
     def run(self):
         try:
@@ -303,6 +363,11 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle("Arch Script Generator")
         self.setMinimumSize(1150, 600)
+
+        # Set window icon
+        icon_path = asset("logo.ico")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
 
         self.script_output = QTextEdit()
         self.script_output.setReadOnly(True)
@@ -431,6 +496,14 @@ class MainWindow(QMainWindow):
                     Qt.TransformationMode.SmoothTransformation
                 ))
 
+    def _append_to_script(self, text: str):
+        """Append text to the script output, adding a newline separator if needed."""
+        current = self.script_output.toPlainText()
+        if current.strip():
+            self.script_output.setPlainText(current.rstrip("\n") + "\n\n" + text)
+        else:
+            self.script_output.setPlainText(text)
+
     # ─────────────────────────────────────────────
     # Groq calls (threaded)
     # ─────────────────────────────────────────────
@@ -458,7 +531,8 @@ class MainWindow(QMainWindow):
         self._set_busy(self.send_button, True, "Send")
 
         def on_done(result):
-            self.script_output.setPlainText(result)
+            # Append to existing script instead of overwriting
+            self._append_to_script(result)
             self.chat_display.append("Script generated ✓\n")
             self._set_busy(self.send_button, False, "Send")
 
@@ -475,7 +549,7 @@ class MainWindow(QMainWindow):
             self.script_output.setPlaceholderText("Nothing selected yet.")
             return
         self._set_busy(self.generate_btn, True, "Generate Script")
-        prompt = "Generate an Arch Linux bash install/config script for:\n" + "\n".join(items)
+        prompt = f"Generate an Arch Linux  install/config script for:\n" + "\n".join(items)
 
         def on_done(result):
             self.script_output.setPlainText(result)
@@ -537,38 +611,10 @@ class MainWindow(QMainWindow):
         page.setLayout(layout)
         return page
 
-    def show_selections_dialog(self):
-        dialog = QDialog(self)
-        dialog.setWindowTitle("Current Selections")
-        dialog.setMinimumSize(420, 360)
-        dialog.setStyleSheet("background-color: #1e1e2e; color: white;")
-        layout = QVBoxLayout()
-        layout.setContentsMargins(15, 15, 15, 15)
-        layout.setSpacing(8)
-        title = QLabel("Your current selections:")
-        title.setStyleSheet("color: #89b4fa; font-size: 15px; font-weight: bold;")
-        layout.addWidget(title)
-        items = self.collect_selections()
-        if items:
-            for item in items:
-                lbl = QLabel("- " + item)
-                lbl.setStyleSheet("color: white; font-size: 13px; padding: 2px 0;")
-                layout.addWidget(lbl)
-        else:
-            lbl = QLabel("Nothing selected yet.")
-            lbl.setWordWrap(True)
-            lbl.setStyleSheet("color: #6c7086; font-size: 13px;")
-            layout.addWidget(lbl)
-        layout.addStretch()
-        close_btn = QPushButton("Close")
-        close_btn.setStyleSheet("background-color: #313244; color: white; padding: 8px; border-radius: 4px;")
-        close_btn.clicked.connect(dialog.accept)
-        layout.addWidget(close_btn)
-        dialog.setLayout(layout)
-        dialog.exec()
-
-    def collect_selections(self):
-        items = []
+    def _get_all_raw_selections(self):
+        """Return list of (key, display_string) for every available selection, regardless of enabled state."""
+        raw = []
+        raw.append((f"Shell shebang: #!/bin/{SHELL}", f"Shell shebang: #!/bin/{SHELL}"))
         checks = [
             ("Theme",               lambda: self.theme_dropdown.currentText()),
             ("Desktop Environment", lambda: self.desktop_environment_dropdown.currentText()),
@@ -589,30 +635,148 @@ class MainWindow(QMainWindow):
         ]
         for label, getter in checks:
             try:
-                items.append(f"{label}: {getter()}")
+                val = getter()
+                key = f"{label}: {val}"
+                raw.append((key, key))
             except AttributeError:
                 pass
         try:
             selected_apps = [c.name for c in self.app_cards if c.selected]
             if selected_apps:
-                items.append("Apps: " + ", ".join(selected_apps))
+                key = "Apps: " + ", ".join(selected_apps)
+                raw.append((key, key))
         except AttributeError:
             pass
         try:
             if self.wallpaper_url.text():
-                items.append("Wallpaper: " + self.wallpaper_url.text())
+                key = "Wallpaper: " + self.wallpaper_url.text()
+                raw.append((key, key))
         except AttributeError:
             pass
         try:
             if self.dot_file_url.text():
-                items.append("Dot Files URL: " + self.dot_file_url.text())
+                key = "Dot Files URL: " + self.dot_file_url.text()
+                raw.append((key, key))
         except AttributeError:
             pass
-        return items
+        return raw
 
-    # ─────────────────────────────────────────────
-    # Pages
-    # ─────────────────────────────────────────────
+    def show_selections_dialog(self):
+        # Init enabled-state dict on first open — all OFF by default
+        if not hasattr(self, '_selection_enabled'):
+            self._selection_enabled = {}
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle("Selections")
+        dialog.setMinimumSize(480, 520)
+        dialog.setStyleSheet("background-color: #1e1e2e; color: white;")
+
+        outer = QVBoxLayout()
+        outer.setContentsMargins(15, 15, 15, 15)
+        outer.setSpacing(10)
+
+        title = QLabel("Select what to include in the script:")
+        title.setStyleSheet("color: #89b4fa; font-size: 15px; font-weight: bold;")
+        outer.addWidget(title)
+
+        # Scrollable checkbox list
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll.setStyleSheet("border: none; background-color: #1e1e2e;")
+        scroll_widget = QWidget()
+        scroll_layout = QVBoxLayout()
+        scroll_layout.setSpacing(6)
+        scroll_layout.setContentsMargins(4, 4, 4, 4)
+
+        raw = self._get_all_raw_selections()
+        dialog_checkboxes = {}  # key -> QCheckBox, local to this dialog open
+
+        if not raw:
+            empty = QLabel("No options available yet.\nConfigure your settings on the pages first.")
+            empty.setStyleSheet("color: #6c7086; font-size: 13px;")
+            empty.setWordWrap(True)
+            scroll_layout.addWidget(empty)
+        else:
+            for key, display in raw:
+                cb = QCheckBox(display)
+                cb.setChecked(self._selection_enabled.get(key, False))  # OFF by default
+                cb.setStyleSheet("""
+                    QCheckBox { color: white; font-size: 13px; }
+                    QCheckBox::indicator {
+                        width: 18px; height: 18px;
+                        border: 2px solid #89b4fa;
+                        border-radius: 4px;
+                        background-color: #313244;
+                    }
+                    QCheckBox::indicator:checked { background-color: #89b4fa; }
+                """)
+                scroll_layout.addWidget(cb)
+                dialog_checkboxes[key] = cb
+
+        scroll_layout.addStretch()
+        scroll_widget.setLayout(scroll_layout)
+        scroll.setWidget(scroll_widget)
+        outer.addWidget(scroll, stretch=1)
+
+        # Select All / Deselect All
+        toggle_row = QHBoxLayout()
+        toggle_row.setSpacing(8)
+
+        def select_all():
+            for cb in dialog_checkboxes.values():
+                cb.setChecked(True)
+
+        def deselect_all():
+            for cb in dialog_checkboxes.values():
+                cb.setChecked(False)
+
+        sel_all_btn = QPushButton("✔ Select All")
+        sel_all_btn.setStyleSheet(BTN_NEUTRAL)
+        sel_all_btn.clicked.connect(select_all)
+        toggle_row.addWidget(sel_all_btn)
+
+        desel_all_btn = QPushButton("✖ Deselect All")
+        desel_all_btn.setStyleSheet(
+            "background-color: #f38ba8; color: black; padding: 8px 14px;"
+            "font-size: 13px; border-radius: 6px;"
+        )
+        desel_all_btn.clicked.connect(deselect_all)
+        toggle_row.addWidget(desel_all_btn)
+        toggle_row.addStretch()
+        outer.addLayout(toggle_row)
+
+        # Apply / Cancel
+        btn_row = QHBoxLayout()
+        btn_row.setSpacing(10)
+
+        def apply_and_close():
+            for key, cb in dialog_checkboxes.items():
+                self._selection_enabled[key] = cb.isChecked()
+            dialog.accept()
+
+        apply_btn = QPushButton("Apply")
+        apply_btn.setStyleSheet(BTN_SUCCESS)
+        apply_btn.clicked.connect(apply_and_close)
+        btn_row.addWidget(apply_btn)
+
+        cancel_btn = QPushButton("Cancel")
+        cancel_btn.setStyleSheet(BTN_NEUTRAL)
+        cancel_btn.clicked.connect(dialog.reject)
+        btn_row.addWidget(cancel_btn)
+
+        outer.addLayout(btn_row)
+        dialog.setLayout(outer)
+        dialog.exec()
+
+    def collect_selections(self):
+        """Return only items the user has explicitly enabled in the selections dialog."""
+        if not hasattr(self, '_selection_enabled'):
+            return []
+        raw = self._get_all_raw_selections()
+        return [key for key, _ in raw if self._selection_enabled.get(key, False)]
+
+
+    
     def make_background_page(self):
         page   = QWidget()
         layout = QVBoxLayout()
@@ -658,7 +822,6 @@ class MainWindow(QMainWindow):
 
         self.theme_dropdown = QComboBox()
         self.theme_dropdown.setStyleSheet(DROPDOWN_STYLE)
-        # asset() makes paths relative to the script/exe — portable on any machine
         self.themes = {
             "Catppuccin":  asset("themes", "catppuccin.webp"),
             "Dracula":     asset("themes", "dracula.webp"),
@@ -956,6 +1119,10 @@ class MainWindow(QMainWindow):
         )
         make_row("Timezone", self.timezone_dropdown)
         self.shell_dropdown = make_dropdown("bash", "zsh", "fish")
+        # Pre-select shell based on what user picked at startup
+        idx = self.shell_dropdown.findText(SHELL)
+        if idx >= 0:
+            self.shell_dropdown.setCurrentIndex(idx)
         make_row("Shell", self.shell_dropdown)
 
         make_section("Boot")
@@ -1228,33 +1395,40 @@ class MainWindow(QMainWindow):
 # Entry point
 # ─────────────────────────────────────────────────────────────
 def get_or_ask_api_key(app: QApplication) -> str | None:
-    """
-    Returns a valid API key string, or None if the user quits.
-    Shows the dialog on first run; re-shows it if the saved key is empty.
-    """
     cfg = load_config()
     key = cfg.get("groq_api_key", "").strip()
-
     if key:
-        return key                         # already configured, skip dialog
-
-    # First launch — show the dialog
+        return key
     while True:
         dlg = ApiKeyDialog()
         if dlg.exec() != QDialog.DialogCode.Accepted:
-            return None                    # user hit Quit
+            return None
         key = dlg.get_key()
         if key:
             save_config({"groq_api_key": key})
             return key
+
+def show_shell_dialog() -> bool:
+    """Returns False if user closed the dialog without selecting."""
+    dlg = ShellDialog()
+    return dlg.exec() == QDialog.DialogCode.Accepted
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle("Fusion")
 
+    # Set app-level icon (taskbar, alt-tab, etc.)
+    icon_path = asset("logo.ico")
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
+
     key = get_or_ask_api_key(app)
     if not key:
+        sys.exit(0)
+
+    # Shell dialog — must complete before main window opens
+    if not show_shell_dialog():
         sys.exit(0)
 
     init_groq_client(key)
