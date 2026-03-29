@@ -1,10 +1,3 @@
-<p align="center">
-  <img src="logo.png" width="200"/>
-</p>
-
-<h1 align="center">🚀 ArchScriptGen</h1>
-
-![Banner](./banner.png)
 # 🚀 ArchScriptGen
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
