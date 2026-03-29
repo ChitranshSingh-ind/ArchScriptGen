@@ -5,3 +5,4 @@ dist/
 *.exe
 *.zip
 config.json
+build.sh
