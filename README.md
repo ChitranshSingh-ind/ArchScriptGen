@@ -63,7 +63,25 @@ ArchScriptGen.exe
 4. Enter your free groq API key
 5. Atart generating scripts right away.
 ---
-
+***ARCH USER REPOSITORY(AUR)***
+1. To install YAY -
+   ```bash
+   sudo pacman -S --needed git base-devel
+   git clone https://aur.archlinux.org/yay.git
+   cd yay
+   makepkg -si
+   ```
+2. Install the app -
+   ```bash
+   yay -S arch-script-gen
+   ```
+3. Run the app -
+   ```bash
+   arch-script-gen
+   ```
+4. Enter your groq api key
+5. Start generating your arch script gen
+---
 ## 🔑 API Key Setup
 
 This app uses the **Groq API** for AI script generation.
@@ -154,7 +172,6 @@ project/
 * Arch ISO builder integration (archiso)
 * Plugin system for custom configs
 * Performance optimizations
-* Publishing in the AUR
 ---
 
 ## 🤝 Contributing
@@ -180,5 +197,3 @@ If you like this project:
 This project is licensed under the **MIT License**.
 
 ---
-## NOTE - 
-This app would be soon availble in **AUR** repositories. So, stay tuned!!!
