@@ -1,6 +1,4 @@
 # 🚀 ArchScriptGen
-
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Platform]( https://img.shields.io/badge/Platform-Linux&Windows-green)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
