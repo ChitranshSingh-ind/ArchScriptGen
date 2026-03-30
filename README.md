@@ -67,7 +67,7 @@ ArchScriptGen.exe
 ## 🔑 API Key Setup
 
 This app uses the **Groq API** for AI script generation.
-
+You need your **Own API key**
 Get your free API key here:
 👉 https://console.groq.com/keys
 
@@ -85,10 +85,12 @@ Get your free API key here:
 
 ## 🧠 How It Works
 
-1. Select your system preferences (DE, apps, drivers, etc.)
-2. The app sends your request to Groq AI
-3. AI generates a complete Arch Linux bash script
-4. You can review and export it
+1. Select your shell
+2. Select your system preferences (DE, apps, drivers, etc.)
+3. The app sends your request to Groq AI
+4. AI generates a complete Arch Linux bash script
+5. You can get personalised changes using the chatbot
+6. You can review and export it
 
 ---
 
@@ -141,7 +143,7 @@ project/
 ## 🐞 Known Issues
 
 * First launch may be slow (PyInstaller extraction behavior)
-* Large executable size due to PyQt6 bundling
+* Large executable size due to PyQt6 bundling(332mb)
 
 ---
 
@@ -152,7 +154,7 @@ project/
 * Arch ISO builder integration (archiso)
 * Plugin system for custom configs
 * Performance optimizations
-
+* Publishing in the AUR
 ---
 
 ## 🤝 Contributing
@@ -178,3 +180,5 @@ If you like this project:
 This project is licensed under the **MIT License**.
 
 ---
+## NOTE - 
+This app would be soon availble in **AUR** repositories. So, stay tuned!!!
