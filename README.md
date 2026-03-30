@@ -39,7 +39,7 @@ Built with **PyQt6 + Groq API**, it simplifies the complex Arch setup process in
 ---
 
 ## 🚀 Quick Start
-
+***WINDOWS-***
 1. Download the latest version from **Releases**
 2. Extract the `.zip` file
 3. Open the folder
@@ -52,6 +52,16 @@ ArchScriptGen.exe
 5. Enter your Groq API key when prompted
 6. Start generating your Arch install script
 
+---
+***ARCH LINUX -***
+1. Download the latest arch executable from the releases section
+2. In a terminal or dolphin, go to the directory in which the file has been downloaded
+3. In dolphin, double click the executable/in terminal, run - 
+```bash
+./arch-script-gen
+```
+4. Enter your free groq API key
+5. Atart generating scripts right away.
 ---
 
 ## 🔑 API Key Setup
@@ -68,7 +78,7 @@ Get your free API key here:
 
 ## ⚠️ Requirements
 
-* Windows OS
+* Windows/Linux(No WSL)
 * Internet connection (required for API + package search)
 
 ---
