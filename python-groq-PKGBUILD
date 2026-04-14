@@ -1,0 +1,36 @@
+# Maintainer: ChitranshSingh-ind <chitranshsingh4174@gmail.com>
+
+pkgname=python-groq
+pkgver=1.1.2
+pkgrel=1
+pkgdesc="The official Python library for the Groq API"
+arch=('any')
+url="https://github.com/groq/groq-python"
+license=('Apache-2.0')
+depends=(
+    'python'
+    'python-httpx'
+    'python-pydantic'
+    'python-anyio'
+    'python-distro'
+    'python-sniffio'
+    'python-typing_extensions'
+)
+makedepends=(
+    'python-build'
+    'python-installer'
+    'python-wheel'
+    'python-hatchling'
+)
+source=("https://files.pythonhosted.org/packages/source/g/groq/groq-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "groq-$pkgver"
+    python -m build --wheel --no-isolation
+}
+
+package() {
+    cd "groq-$pkgver"
+    python -m installer --destdir="$pkgdir" dist/*.whl
+}
