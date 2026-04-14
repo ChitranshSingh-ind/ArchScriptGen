@@ -113,6 +113,60 @@ Get your free API key here:
 6. You can review and export it
 
 ---
+## 📸 Screenshots
+
+### 🏠 Home — AI Script Generation
+![Home](screenshots/GeneratedScripts.png)
+Configure your system, hit **Generate Script**, and get a complete Arch install
+script powered by Groq AI. Refine it further using the built-in chatbot on the left.
+
+---
+
+### 🖥️ Desktop Environment
+![Desktop Environment](screenshots/DesktopEnvironment.png)
+Choose your DE (GNOME, KDE, i3, XFCE and more) with a live preview so you know
+exactly what you're getting before you install.
+
+---
+
+### 🎨 Global Themes
+![Global Themes](screenshots/globalThemes.png)
+Pick from popular themes like Catppuccin with a visual grid preview — no more
+guessing what a theme looks like after the fact.
+
+---
+
+### 🖱️ Mouse Pointer Styles
+![Mouse Cursors](screenshots/mouseCursors.png)
+Browse and select cursor themes with full previews built right into the app.
+
+---
+
+### 📦 Discover Apps
+![Apps](screenshots/apps.png)
+Search the Arch repositories and add packages directly to your install script
+without touching a terminal.
+
+---
+
+### ⚙️ Settings
+![Settings](screenshots/Settings.png)
+Configure hostname, username, shell, bootloader, kernel, display manager,
+timezone and more — all from one page.
+
+---
+
+### ✅ View Selections
+![Selections](screenshots/SelectedOptions.png)
+Review every option you've chosen before generating the script. Select or
+deselect individual components with a single click.
+
+---
+
+### 🔑 API Key Setup
+![API Key](screenshots/APIKEY.png)
+Get a free Groq API key at [console.groq.com](https://console.groq.com/keys)
+and paste it here. Stored locally — never shared.
 
 ## ⚠️ Disclaimer
 
