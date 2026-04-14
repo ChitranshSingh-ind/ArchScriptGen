@@ -1,13 +1,15 @@
 # 🚀 ArchScriptGen
-
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
-![Platform]( https://img.shields.io/badge/Platform-Linux&Windows-green)
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
 ![Release](https://img.shields.io/github/v/release/ChitranshSingh-ind/ArchScriptGen)
 ![Stars](https://img.shields.io/github/stars/ChitranshSingh-ind/ArchScriptGen)
 ![Issues](https://img.shields.io/github/issues/ChitranshSingh-ind/ArchScriptGen)
 ![Forks](https://img.shields.io/github/forks/ChitranshSingh-ind/ArchScriptGen)
+![AUR Version](https://img.shields.io/aur/version/arch-script-gen)
+![AUR License](https://img.shields.io/aur/license/arch-script-gen)
+![PyQt6](https://img.shields.io/badge/PyQt6-6.x-green)
+![Platform](https://img.shields.io/badge/platform-Arch%20Linux-1793D1?logo=arch-linux)
+![Groq](https://img.shields.io/badge/powered%20by-Groq-orange)
 
 ---
 
@@ -39,6 +41,35 @@ Built with **PyQt6 + Groq API**, it simplifies the complex Arch setup process in
 ---
 
 ## 🚀 Quick Start
+***ARCH USER REPOSITORY(AUR) RECOMMENDED***
+1. To install YAY -
+   ```bash
+   sudo pacman -S --needed git base-devel
+   git clone https://aur.archlinux.org/yay.git
+   cd yay
+   makepkg -si
+   ```
+2. Install the app -
+   ```bash
+   yay -S arch-script-gen
+   ```
+3. Run the app -
+   ```bash
+   arch-script-gen
+   ```
+4. Enter your groq api key
+5. Start generating your arch script gen
+---
+***ARCH LINUX -***
+1. Download the latest arch executable from the releases section
+2. In a terminal or dolphin, go to the directory in which the file has been downloaded
+3. In dolphin, double click the executable/in terminal, run - 
+```bash
+./arch-script-gen
+```
+4. Enter your free groq API key
+5. Atart generating scripts right away.
+---
 ***WINDOWS-***
 1. Download the latest version from **Releases**
 2. Extract the `.zip` file
@@ -53,17 +84,6 @@ ArchScriptGen.exe
 6. Start generating your Arch install script
 
 ---
-***ARCH LINUX -***
-1. Download the latest arch executable from the releases section
-2. In a terminal or dolphin, go to the directory in which the file has been downloaded
-3. In dolphin, double click the executable/in terminal, run - 
-```bash
-./arch-script-gen
-```
-4. Enter your free groq API key
-5. Atart generating scripts right away.
----
-
 ## 🔑 API Key Setup
 
 This app uses the **Groq API** for AI script generation.
@@ -154,7 +174,6 @@ project/
 * Arch ISO builder integration (archiso)
 * Plugin system for custom configs
 * Performance optimizations
-* Publishing in the AUR
 ---
 
 ## 🤝 Contributing
@@ -180,5 +199,3 @@ If you like this project:
 This project is licensed under the **MIT License**.
 
 ---
-## NOTE - 
-This app would be soon availble in **AUR** repositories. So, stay tuned!!!
